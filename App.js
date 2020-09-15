@@ -16,6 +16,9 @@ var auth = firebase.auth();
 
 var db = firebase.firestore();
 
+var storage = firebase.storage();
+
+
 // here we create  registratioon user function
 
 function registratioon() {
@@ -25,13 +28,13 @@ function registratioon() {
 
     firebase.auth().createUserWithEmailAndPassword(Email, Password).then(function (sucess) {
 
-        alert("Your Email is sucessfully register" + sucess);
+        alert("Your Email is sucessfully register" + sucess.message);
 
         redirexted()
 
 
     }).catch(function (error, message) {
-        alert(message + error);
+        alert(error.message);
 
     });;
 }
@@ -51,11 +54,13 @@ function login() {
         redirexted()
 
 
-    }).catch(function (error, message) {
-        alert(message + error);
+    }).catch(function (error) {
+        alert(error.message);
     });;
 }
 
+
+// here we start to creating database on firebase
 
 
 function redirexted() {
@@ -75,62 +80,50 @@ function redirexted() {
 
 var todo = document.getElementById('val');
 
+var fileInput = document.getElementById("file");
+
+var storageRef = storage.ref();
+
 
 function todoAdd() {
 
-    db.collection("todo").add({
-        todo: todo.value,
-        uid: auth.currentUser.uid
-    })
-        .then(function (docRef) {
-            console.log("Document written with ID: ", docRef.id);
-            todo.value = '';
+    if(fileInput && todo.value){
+
+        var imageFile = fileInput.files[0];
+
+    var imagesRef = storageRef.child('images/' + fileInput.files[0].name);
+
+    var uploadTask = imagesRef.put(imageFile);
+
+    uploadTask.snapshot.ref.getDownloadURL().then(function(url) {
+
+        db.collection("todo").add({
+            todo: todo.value,
+            uid: auth.currentUser.uid,
+            image: url
         })
-        .catch(function (error) {
-            console.error("Error adding document: ", error);
-        });
+            .then(function (docRef) {
+                console.log("Document written with ID: ", docRef.id);
+                todo.value = '';
+            })
+            .catch(function (error) {
+                console.error("Error adding document: ", error);
+            });
+
+      })
+
+    }else{alert('please pick image and write todo')}
+
+    
+
+    
 
 
 }
 
-//here we get all user  Data
-
-
-//  function getData() {
-
-//     db.collection("todo").get().then((querySnapshot) => {
-//         querySnapshot.forEach((doc) => {
-//             console.log(doc.id , doc.data());
-//         });
-//     });
-
-
-
-// } 
-
-
-// here we get current user All  Data
-
-
-// function getData() {
-
-//     var uid = JSON.parse(localStorage.getItem('userInfo')).uid;
-
-
-//     db.collection("todo").where("uid", "==", uid)
-//     .get()
-//     .then((querySnapshot) => {
-//         querySnapshot.forEach((doc) => {
-//             console.log(doc.id , doc.data());
-//         });
-//     });
-
-// }
-
-
-
 //here we get update on  Realtime Data Update 
 
+var unsubscribe;
 
 function RealtimeData() {
 
@@ -140,7 +133,7 @@ function RealtimeData() {
 
 
 
-    db.collection("todo").where("uid", "==", uid)
+    unsubscribe =   db.collection("todo").where("uid", "==", uid)
         .onSnapshot(function (snapshot) {
             snapshot.docChanges().forEach(function (change) {
                 if (change.type === "added") {
@@ -197,6 +190,15 @@ function todoList(todoItem) {
     deleteBtn.appendChild(deleteTextNode);
     deleteBtn.setAttribute('onclick' , 'deleteItem(this)');
     p.appendChild(deleteBtn);
+
+    var todoImage = document.createElement('img');
+    todoImage.setAttribute('src' , todoObj.image);
+    todoImage.setAttribute('width' , '50px');
+    todoImage.setAttribute('height' , '50px');
+    console.log(todo)
+    p.appendChild(todoImage);
+
+
 }
 
 // here we delete item on database
@@ -258,6 +260,75 @@ function domUpdateitem(doc){
     updatedValue.childNodes[0].nodeValue = doc.data().todo;
     
 }
+
+
+// here is a log out function
+
+
+function Logout() {
+    firebase.auth().signOut().then(function(success) {
+        unsubscribe();
+
+        localStorage.clear()
+
+        window.location.href = 'index.html';
+      }).catch(function(error) {
+
+        console.log(error.message);
+
+    });
+}
+
+
+
+
+//here we get all user  Data
+
+
+//  function getData() {
+
+//     db.collection("todo").get().then((querySnapshot) => {
+//         querySnapshot.forEach((doc) => {
+//             console.log(doc.id , doc.data());
+//         });
+//     });
+
+
+
+// } 
+
+
+// here we get current user All  Data
+
+
+// function getData() {
+
+//     var uid = JSON.parse(localStorage.getItem('userInfo')).uid;
+
+
+//     db.collection("todo").where("uid", "==", uid)
+//     .get()
+//     .then((querySnapshot) => {
+//         querySnapshot.forEach((doc) => {
+//             console.log(doc.id , doc.data());
+//         });
+//     });
+
+// }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 // Synchronous, Asynchronous and Promises
