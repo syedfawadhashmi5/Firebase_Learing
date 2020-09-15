@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body onload="RealtimeData()">
+    <input type="text" id="val">
+
+    <button onclick="todoAdd()" id="Bten">Add Todo</button>
+
+
+    <div id="list"></div>
+
+
+
+
+
+
+
+
+
+
+
+
+   <!-- Insert these scripts at the bottom of the HTML, but before you use any Firebase services -->
+
+    <!-- Firebase App (the core Firebase SDK) is always required and must be listed first -->
+    <script src="https://www.gstatic.com/firebasejs/7.15.5/firebase-app.js"></script>
+
+    <!-- If you enabled Analytics in your project, add the Firebase SDK for Analytics -->
+    <script src="https://www.gstatic.com/firebasejs/7.15.5/firebase-analytics.js"></script>
+
+    <!-- Add Firebase products that you want to use -->
+    <script src="https://www.gstatic.com/firebasejs/7.15.5/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.15.5/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.15.5/firebase-storage.js"></script>
+  
+<!-- this firebase code at firebase  inside doc athercation -->
+
+
+  <script>
+    // Your web app's Firebase configuration
+    var firebaseConfig = {
+      apiKey: "AIzaSyAGTYJqw3RYtgucrYppr9idsDvrSjyoxYY",
+      authDomain: "fir-firebase-email-password.firebaseapp.com",
+      databaseURL: "https://fir-firebase-email-password.firebaseio.com",
+      projectId: "fir-firebase-email-password",
+      storageBucket: "fir-firebase-email-password.appspot.com",
+      messagingSenderId: "273871473818",
+      appId: "1:273871473818:web:587e7215618bf1f7862323",
+      measurementId: "G-11WLZVL9H0"
+    };
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    firebase.analytics();
+  </script>
+  
+  <script src="./App.js"></script>
+</body>
+</html>
